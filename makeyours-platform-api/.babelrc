@@ -1,0 +1,17 @@
+{
+  "presets": [
+    ["@babel/preset-env", { "loose": true, "targets": { "node": true } }]
+  ],
+  "plugins": [
+    ["@babel/plugin-proposal-optional-chaining", { "loose": true }],
+    ["@babel/plugin-proposal-class-properties", { "loose": true }],
+    ["inline-dotenv"]
+  ],
+  "env": {
+    "production": {
+      "sourceMaps": "inline",
+      "minified": true,
+      "comments": false
+    }
+  }
+}

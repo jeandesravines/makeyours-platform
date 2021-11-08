@@ -1,0 +1,36 @@
+image: docker
+
+services:
+  - docker:dind
+
+variables:
+  IMAGE_REF_NAME: ${CI_PROJECT_NAME}:${CI_COMMIT_REF_SLUG}
+  IMAGE_RELEASE_NAME: ${CI_PROJECT_NAME}:latest
+
+stages:
+  - test
+  - build
+  - deploy
+
+test:
+  stage: test
+  coverage: '/^All files.+\s(\d+\.?\d+)\s\|\s+\|$/'
+  script:
+    - mv .env.test .env
+    - docker build --target workspace --tag $IMAGE_REF_NAME .
+    - docker run --rm $IMAGE_REF_NAME yarn lint
+    - docker run --rm $IMAGE_REF_NAME yarn test --coverage --ci
+
+build:
+  stage: build
+  script:
+    - mv .env.production .env
+    - docker build --tag $IMAGE_REF_NAME .
+
+deploy:
+  stage: deploy
+  only:
+    - master
+  script:
+    - mv .env.production .env
+    - docker build --tag $IMAGE_REF_NAME --tag $IMAGE_RELEASE_NAME .

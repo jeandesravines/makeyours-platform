@@ -1,0 +1,34 @@
+version: "3.7"
+services:
+  api:
+    build:
+      context: makeyours-platform-api
+      target: workspace
+    depends_on:
+      - "mongo"
+    environment:
+      BABEL_DISABLE_CACHE: 1
+    networks:
+      - "backend"
+    ports:
+      - "4000:8080"
+    volumes:
+      - "./makeyours-platform-api:/usr/src/app"
+      - "/usr/src/app/dist"
+      - "/usr/src/app/node_modules"
+
+  mongo:
+    image: mongo
+    command: mongod --logpath=/dev/null
+    networks:
+      - "backend"
+    ports:
+      - "27017:27017"
+    volumes:
+      - "db:/data/db"
+
+networks:
+  backend: null
+
+volumes:
+  db: null
